@@ -21,7 +21,7 @@ const MOCK_PRODUCTS = [
   { id: 15, name: "Sacs à Main Tendance Croco", detailPrice: 15000, wholesalePrice: 9500, minWholesaleQty: 6, unit: "pièce", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&auto=format&fit=crop&q=60" },
   { id: 16, name: "Mèches Remy Hair Grade 12A", detailPrice: 25000, wholesalePrice: 18000, minWholesaleQty: 5, unit: "paquet", image: "https://images.unsplash.com/photo-1610030469668-93535c17b6b3?w=400&auto=format&fit=crop&q=60" },
   { id: 17, name: "Chaussures Sneakers Luxe", detailPrice: 18000, wholesalePrice: 12000, minWholesaleQty: 8, unit: "paire", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop&q=60" },
-  { id: 15, name: "Sacs à Main Tendance Croco", detailPrice: 15000, wholesalePrice: 9500, minWholesaleQty: 6, unit: "pièce", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&auto=format&fit=crop&q=60" }
+  { id: 18, name: "Sacs à Main Tendance Croco", detailPrice: 15000, wholesalePrice: 9500, minWholesaleQty: 6, unit: "pièce", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&auto=format&fit=crop&q=60" }
 
 ];
 
@@ -58,6 +58,9 @@ export default function CatalogPage() {
 
   const totalCart = cartItems.reduce((sum, item) => sum + item.total, 0);
 
+  // Calcule la somme totale de toutes les pièces dans le panier
+const totalItemsCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
+
   // Nombre de produits qui profitent actuellement du tarif de gros
   const countWholesaleActive = MOCK_PRODUCTS.filter(p => (quantities[p.id] || 0) >= p.minWholesaleQty).length;
 
@@ -89,6 +92,62 @@ export default function CatalogPage() {
         <h1 className="text-3xl font-extrabold tracking-tight">Catalogue JC Import</h1>
         <p className="text-gray-400 text-sm mt-1">Ajustez les quantités pour basculer automatiquement au tarif Grossiste.</p>
       </div>
+
+      {/* Top Navbar Premium */}
+<nav className="fixed top-0 left-0 right-0 h-16 bg-slate-950/80 backdrop-blur-md border-b border-slate-900 z-50 px-4">
+  <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
+    
+    {/* Logo JC Import */}
+    <div className="flex items-center gap-2">
+      <div className="w-8 h-8 bg-gradient-to-tr from-amber-500 to-amber-400 rounded-lg flex items-center justify-center font-black text-slate-950 text-sm tracking-wider">
+        JC
+      </div>
+      <span className="font-bold tracking-tight text-sm hidden sm:inline-block">
+        JC Import <span className="text-amber-400 text-xs font-medium">Catalog</span>
+      </span>
+    </div>
+
+    {/* Icône Panier Interactive à l'opposé */}
+    <div className="relative group">
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={() => {
+          // Si tu veux scroller directement au récapitulatif ou ouvrir un drawer plus tard
+          const cartSection = document.getElementById('cart-summary');
+          if (cartSection) cartSection.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="p-2.5 bg-slate-900/60 border border-slate-900 hover:border-slate-800 rounded-xl transition-colors flex items-center gap-2 text-gray-300 hover:text-white"
+      >
+        <div className="relative">
+          <ShoppingCart size={19} className="text-amber-400" />
+          
+          {/* Badge Chiffre Animé */}
+          <AnimatePresence mode="popLayout">
+            {totalItemsCount > 0 && (
+              <motion.span
+                key={totalItemsCount}
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.6, opacity: 0 }}
+                className="absolute -top-2.5 -right-2.5 bg-red-500 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 shadow-lg"
+              >
+                {totalItemsCount}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Montant total discret à côté de l'icône */}
+        {totalCart > 0 && (
+          <span className="text-xs font-bold text-gray-200 pl-1 hidden xs:inline">
+            {totalCart.toLocaleString()} XAF
+          </span>
+        )}
+      </motion.button>
+    </div>
+
+  </div>
+</nav>
 
       {/* Grid Architecture */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
