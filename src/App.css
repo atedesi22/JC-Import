@@ -1,0 +1,65 @@
+/* jc-import/
+├── public/
+│   ├── favicon.ico
+│   └── index.html
+├── src/
+│   ├── assets/                  # Images, logos, icônes d'avions/bateaux
+│   │   └── logo-jc.png
+│   │
+│   ├── components/              # Composants globaux et réutilisables (UI)
+│   │   ├── UI/
+│   │   │   ├── Button.jsx
+│   │   │   ├── ProgressBar.jsx  # Utilisé pour les jauges de groupage
+│   │   │   └── Modal.jsx
+│   │   └── Layout/
+│   │       ├── Navbar.jsx
+│   │       └── Footer.jsx
+│   │
+│   ├── context/                 # Le "Cerveau" de l'app (LocalStorage + États)
+│   │   ├── AppContext.jsx       # Regroupe les providers pour simplifier
+│   │   ├── CartContext.jsx      # Panier, calculs Gros/Détail, WhatsApp string
+│   │   ├── GroupageContext.jsx  # État des jauges collectives et vols Chine
+│   │   └── UserContext.jsx      # Session (Client simple, Revendeur, Grossiste)
+│   │
+│   ├── data/                    # Données statiques ou mockées (avant Laravel)
+│   │   ├── products.json        # Catalogue initial (Chine -> Avion 2 semaines)
+│   │   └── chatbotSteps.json    # Arbre de décision du mini-chatbot
+│   │
+│   ├── features/                # Organisation par grand module fonctionnel
+│   │   ├── catalog/             # Module Catalogue / Vente
+│   │   │   ├── components/
+│   │   │   │   ├── ProductCard.jsx  # Gère l'affichage Prix Gros vs Détail
+│   │   │   │   └── ProductList.jsx
+│   │   │   └── CatalogPage.jsx
+│   │   │
+│   │   ├── groupage/            # Module Suivi de vols & Groupage
+│   │   │   ├── components/
+│   │   │   │   ├── FlightStatus.jsx # Compte à rebours J+14
+│   │   │   │   └── JaugeContainer.jsx
+│   │   │   └── GroupagePage.jsx
+│   │   │
+│   │   ├── chatbot/             # Module Assistant Virtuel
+│   │   │   ├── components/
+│   │   │   │   ├── ChatMessage.jsx
+│   │   │   │   └── ChatOptions.jsx
+│   │   │   └── ChatbotWidget.jsx # Le bouton flottant en bas à droite
+│   │   │
+│   │   └── dashboard/           # Vision future (Alibaba/Amazon B2B)
+│   │       ├── MerchantPanel.jsx # Espace pour ses futurs revendeurs
+│   │       └── AdminPanel.jsx    # Tableau de bord de ton amie
+│   │
+│   ├── hooks/                   # Custom hooks pour alléger les composants
+│   │   ├── useLocalStorage.js   # Hook magique pour synchroniser les états
+│   │   └── useCountdown.js      # Calcule le temps restant pour l'avion
+│   │
+│   ├── styles/                  # Styles globaux (Tailwind)
+│   │   └── index.css
+│   │
+│   ├── App.jsx                  # Routeur et point d'entrée des Contextes
+│   └── main.jsx
+├── package.json
+└── tailwind.config.js
+
+mkdir -p src/{assets,components/{UI,Layout},context,data,features/{catalog/components,groupage/components,chatbot/components,dashboard},hooks,pages,styles} && touch src/assets/logo-jc.png src/components/UI/{Button.jsx,ProgressBar.jsx,Modal.jsx} src/components/Layout/{Navbar.jsx,Footer.jsx} src/context/{AppContext.jsx,CartContext.jsx,GroupageContext.jsx,UserContext.jsx} src/data/{products.json,chatbotSteps.json} src/features/catalog/components/{ProductCard.jsx,ProductList.jsx} src/features/catalog/CatalogPage.jsx src/features/groupage/components/{FlightStatus.jsx,JaugeContainer.jsx} src/features/groupage/GroupagePage.jsx src/features/chatbot/components/{ChatMessage.jsx,ChatOptions.jsx} src/features/chatbot/ChatbotWidget.jsx src/features/dashboard/{MerchantPanel.jsx,AdminPanel.jsx} src/hooks/{useLocalStorage.js,useCountdown.js} src/pages/Home.jsx
+
+*/
