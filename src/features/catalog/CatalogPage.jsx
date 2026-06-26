@@ -64,46 +64,109 @@ export default function CatalogPage() {
       {/* Grid Catalogue */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Liste des Produits */}
-        <div className="lg:col-span-2 space-y-6">
-          {MOCK_PRODUCTS.map((product) => {
-            const currentQty = quantities[product.id] || 0;
-            const isWholesaleActive = currentQty >= product.minWholesaleQty;
+        {/* Liste des Produits en Grille Premium */}
+<div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-1 h-fit">
+  {MOCK_PRODUCTS.map((product) => {
+    const currentQty = quantities[product.id] || 0;
+    const isWholesaleActive = currentQty >= product.minWholesaleQty;
+    
+    // Calcul du pourcentage d'économie pour valoriser le prix de gros
+    const economy = Math.round(((product.detailPrice - product.wholesalePrice) / product.detailPrice) * 100);
 
-            return (
-              <motion.div 
-                key={product.id}
-                className="bg-slate-900/60 border border-slate-900 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center"
-                layout
-              >
-                <img src={product.image} alt={product.name} className="w-24 h-24 rounded-xl object-cover bg-slate-800" />
-                
-                <div className="flex-1 text-center sm:text-left space-y-1">
-                  <h3 className="font-bold text-lg">{product.name}</h3>
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs mt-1">
-                    <span className={`px-2 py-1 rounded ${!isWholesaleActive ? 'bg-amber-500/20 text-amber-400 font-bold' : 'text-gray-500'}`}>
-                      Détail: {product.detailPrice.toLocaleString()} XAF
-                    </span>
-                    <span className={`px-2 py-1 rounded ${isWholesaleActive ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black' : 'text-gray-400 bg-slate-800'}`}>
-                      Gros: {product.wholesalePrice.toLocaleString()} XAF ( dès {product.minWholesaleQty} )
-                    </span>
-                  </div>
-                </div>
+    return (
+      <motion.div 
+        key={product.id}
+        className="bg-slate-900/40 border border-slate-900/80 rounded-2xl overflow-hidden flex flex-col justify-between group hover:border-amber-500/20 transition-all duration-300 shadow-xl"
+        layout
+      >
+        {/* Zone Image avec Badges flottants */}
+        <div className="relative aspect-square w-full overflow-hidden bg-slate-950">
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          />
+          
+          {/* Badge d'économie sur le prix de gros */}
+          <div className="absolute top-3 left-3 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow">
+            -{economy}% en Gros
+          </div>
 
-                {/* Contrôleur de Quantité */}
-                <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl">
-                  <button onClick={() => handleQtyChange(product.id, -1)} className="p-1 hover:text-amber-400 text-gray-400 transition-colors">
-                    <Minus size={16} />
-                  </button>
-                  <span className="w-8 text-center font-bold text-sm">{currentQty}</span>
-                  <button onClick={() => handleQtyChange(product.id, 1)} className="p-1 hover:text-amber-400 text-gray-400 transition-colors">
-                    <Plus size={16} />
-                  </button>
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Indicateur de statut de prix en temps réel */}
+          {currentQty > 0 && (
+            <div className={`absolute bottom-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-md shadow backdrop-blur-md border ${
+              isWholesaleActive 
+                ? 'bg-amber-500 text-slate-950 border-amber-400' 
+                : 'bg-slate-900/90 text-amber-400 border-slate-800'
+            }`}>
+              {isWholesaleActive ? '⚡ Tarif Gros Activé' : '🛍️ Mode Détail'}
+            </div>
+          )}
         </div>
+
+        {/* Zone Infos & Prix */}
+        <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
+          <div className="space-y-1.5">
+            <h3 className="font-bold text-base text-gray-100 line-clamp-2 min-h-[3rem]">
+              {product.name}
+            </h3>
+            
+            {/* Double Affichage des Prix Vertical */}
+            <div className="space-y-1 bg-slate-950/50 p-2.5 rounded-xl border border-slate-900">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] text-gray-500">Prix à l'unité (Détail) :</span>
+                <span className={`text-xs font-bold ${!isWholesaleActive && currentQty > 0 ? 'text-amber-400' : 'text-gray-400'}`}>
+                  {product.detailPrice.toLocaleString()} XAF
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-slate-900/60 pt-1.5 mt-1">
+                <span className="text-[11px] text-gray-400 font-medium">Prix Grossiste (Gros) :</span>
+                <span className={`text-sm font-black ${isWholesaleActive ? 'text-amber-400' : 'text-white'}`}>
+                  {product.wholesalePrice.toLocaleString()} XAF
+                </span>
+              </div>
+            </div>
+            
+            <p className="text-[10px] text-gray-500 text-center sm:text-left">
+              *Seuil grossiste minimum : <span className="text-gray-400 font-bold">{product.minWholesaleQty} {product.unit}s</span>
+            </p>
+          </div>
+
+          {/* Sélecteur de Quantité Style "Bouton Panier" */}
+          <div className="pt-2">
+            {currentQty === 0 ? (
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => handleQtyChange(product.id, 1)}
+                className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-gray-200 hover:text-white text-xs font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus size={14} className="text-amber-400" /> Ajouter au panier
+              </motion.button>
+            ) : (
+              <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-1 rounded-xl">
+                <button 
+                  onClick={() => handleQtyChange(product.id, -1)} 
+                  className="p-2 hover:bg-slate-900 text-gray-400 hover:text-white rounded-lg transition-colors"
+                >
+                  <Minus size={14} />
+                </button>
+                <div className="text-center">
+                  <span className="block text-xs font-bold">{currentQty} {product.unit}s</span>
+                </div>
+                <button 
+                  onClick={() => handleQtyChange(product.id, 1)} 
+                  className="p-2 hover:bg-slate-900 text-gray-400 hover:text-white rounded-lg transition-colors"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    );
+  })}
+</div>
 
         {/* Panier & Sommaire */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 h-fit sticky top-24 space-y-6">
