@@ -45,7 +45,7 @@ export default function TopNavbar({ products, quantities, onQtyChange }) {
               JC
             </div>
             <span className="font-bold tracking-tight text-sm">
-              JC Import <span className="text-amber-400 text-xs font-medium">Hub</span>
+              JC Import <span className="text-amber-400 text-xs font-medium"></span>
             </span>
           </div>
 
